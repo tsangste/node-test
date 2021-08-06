@@ -3,14 +3,16 @@ import { nanoid } from 'nanoid'
 import { Survey } from './models/survey'
 
 export function cloneSurvey(survey: Survey) {
-  function refreshIds(survey, reference = {}) {
+  const reference = {}
+
+  function refreshIds(survey) {
     if (survey) {
       Object.getOwnPropertyNames(survey).map(p => {
         if (typeof survey[p] === 'object') {
           if (Array.isArray(survey[p])) {
-            survey[p].map(obj => refreshIds(obj, reference))
+            survey[p].map(obj => refreshIds(obj))
           } else {
-            refreshIds(survey[p], reference)
+            refreshIds(survey[p])
           }
         } else if (p === 'id') {
           reference[survey[p]] = nanoid()

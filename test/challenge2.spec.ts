@@ -5,16 +5,11 @@ import { cloneSurvey } from '../src/challenge2'
 
 describe('challenge 2', () => {
   it('should create a new reference for the clone', () => {
-    const survey = { header: { id: nanoid(), title: 'Test' }, children: [] }
-    const clone = cloneSurvey(survey)
-
-    assert.notStrictEqual(clone, survey)
-  })
-
-  it('should regenerate ids', () => {
+    const parentId = nanoid()
     const survey = {
+      _id: parentId,
       header: {
-        id: nanoid(),
+        id: parentId,
         title: 'Test'
       },
       children: []
@@ -22,12 +17,29 @@ describe('challenge 2', () => {
 
     const clone = cloneSurvey(survey)
 
-    assert.notStrictEqual(clone.header.id, survey.header.id)
+    assert.notStrictEqual(clone, survey)
+  })
+
+  it('should not duplicate ids if multiple exist', () => {
+    const parentId = nanoid()
+    const survey = {
+      _id: parentId,
+      header: {
+        id: parentId,
+        title: 'Test'
+      },
+      children: []
+    }
+
+    const clone = cloneSurvey(survey)
+
+    assert.strictEqual(clone.header.id, clone._id)
   })
 
   it('should update sub survey anchor', () => {
     const parentId = nanoid()
     const survey = {
+      _id: parentId,
       header: {
         id: parentId,
         title: 'Test'
@@ -64,6 +76,7 @@ describe('challenge 2', () => {
     const child2 = nanoid()
 
     const survey = {
+      _id: parentId,
       header: {
         id: parentId,
         title: 'Test'

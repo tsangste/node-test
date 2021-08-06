@@ -1,28 +1,24 @@
-interface StandardSurveyHeader {
+interface Header {
   id: string
   title: string
+  link?: link
 }
 
-interface SubSurveyHeader extends StandardSurveyHeader {
-  subSurvey: SubSurvey
-}
-
-interface SubSurvey {
+interface link {
   parentId: string
   anchorId: string
 }
 
-type SurveyHeader = StandardSurveyHeader | SubSurveyHeader
-
-interface Container extends SurveyItem{
+interface Container extends SurveyItem {
   children: SurveyItem[]
 }
 
 interface SurveyItem {
-  header: SurveyHeader
+  header: Header
 }
 
 export interface Survey {
-  header: SurveyHeader
+  _id: string
+  header: Header
   children: Container[]
 }
