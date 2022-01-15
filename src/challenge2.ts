@@ -1,34 +1,84 @@
-import { nanoid } from 'nanoid'
+class Node {
+  readonly value: number
+  left?: Node | null
+  right?: Node | null
 
-import { Survey } from './models/survey'
+  constructor(value: number){
+    this.value = value
+    this.left = null
+    this.right = null
+  }
+}
 
-export function cloneSurvey(survey: Survey) {
-  const reference = {}
+export class BinaryTree {
+  root: Node | null
 
-  function refreshIds(survey) {
-    if (survey) {
-      Object.getOwnPropertyNames(survey).map(p => {
-        if (typeof survey[p] === 'object') {
-          if (Array.isArray(survey[p])) {
-            survey[p].map(obj => refreshIds(obj))
-          } else {
-            refreshIds(survey[p])
-          }
-        } else if (p === 'id') {
-          reference[survey[p]] = nanoid()
-          survey[p] = reference[survey[p]]
-          if (survey?.subSurvey?.anchorId) {
-            survey.subSurvey.anchorId = reference[survey.subSurvey.anchorId] || survey.subSurvey.anchorId
-          }
+  constructor() {
+    this.root = null
+  }
+
+  insert(value: number): void {
+    const newNode = new Node(value)
+    if(this.root === null ) {
+      this.root = newNode
+      return
+    }
+
+    let current: Node = this.root
+    while(current) {
+      if(value === current.value) {
+        return
+      }
+
+      if(value < current.value) {
+        if(!current.left){
+          current.left = newNode
+          return
         }
-      })
 
-      return survey
+        current = current.left
+      } else {
+        if(!current.right) {
+          current.right = newNode
+          return
+        }
+
+        current = current.right
+      }
     }
   }
 
- // Do a lazy deep clone
- const clone = JSON.parse(JSON.stringify(survey))
+  reverse() {
+    throw new Error('not implemented')
+  }
 
- return refreshIds(clone)
+  toArray() {
+    const result: number[] = []
+
+    this.traverse((node: Node) => result.push(node.value))
+
+    return result
+  }
+
+  toString() {
+    return this.toArray().toString()
+  }
+
+  private traverse(process) {
+    const inOrder = node => {
+      if (node){
+        if (node.left !== null) {
+          inOrder(node.left)
+        }
+
+        process(node)
+
+        if (node.right !== null) {
+          inOrder(node.right)
+        }
+      }
+    }
+
+    inOrder(this.root)
+  }
 }
